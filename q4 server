@@ -1,0 +1,48 @@
+import socket
+import threading
+import random
+
+# List of quotes
+quotes = [
+    "Knowledge is power. - Sir Francis Bacon",
+    "Life is like a box of chocolates. You never know what you're gonna get. - Forrest Gump",
+    "Life is like riding a bicycle. To keep your balance, you must keep moving. - Albert Einstein",
+    "May the Force be with you. - Star Wars ",
+]
+
+def handle_client(socket_c):
+    # Retrieve a random quote from the list
+    quote = random.choice(quotes)
+
+    # Send the quote to the client
+    socket_c.send(quote.encode('utf-8'))
+
+    # Close the client socket
+    socket_c.close()
+
+def main():
+ 
+    SERVER_IP = "0.0.0.0"
+    SERVER_PORT = 8888
+
+   
+    socket_s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
+ 
+    address_s = (SERVER_IP, SERVER_PORT)
+    socket_s.bind(address_s)
+
+    socket_s.listen(5)
+    print("Server listening on {}:{}".format(SERVER_IP, SERVER_PORT))
+
+    while True:
+
+        socket_c, address_c = socket_s.accept()
+
+
+        client_thread = threading.Thread(target=handle_client, args=(socket_c,))
+        client_thread.start()
+
+if __name__ == "__main__":
+    main()
+
